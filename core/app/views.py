@@ -4,9 +4,8 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .models import Category, Product, Brand, CartItem
-from .serializers import CustomUserSerializer, BrandSerializer, ProductSerializer, CategorySerializer, \
-    CartItemSerializer
+from .models import Category, Product, CartItem
+from .serializers import CustomUserSerializer, ProductSerializer, CategorySerializer, CartItemSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
@@ -37,11 +36,6 @@ class CategoryList(generics.ListCreateAPIView):
 class ProductList(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-
-
-class BrandList(generics.ListCreateAPIView):
-    queryset = Brand.objects.all()
-    serializer_class = BrandSerializer
 
 
 class ProductDetailView(generics.RetrieveAPIView):
@@ -91,6 +85,5 @@ class ProductSearchView(generics.ListAPIView):
     def get_queryset(self):
         query = self.request.query_params.get('q', '')
         if query:
-            return Product.objects.filter(name__icontains=query) | Product.objects.filter(
-                description__icontains=query)
+            return Product.objects.filter(name__icontains=query) | Product.objects.filter(description__icontains=query)
         return Product.objects.all()

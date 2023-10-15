@@ -48,10 +48,11 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    brand = models.CharField(max_length=225)
     name = models.CharField(max_length=225)
+    description = models.TextField(max_length=1000)
     price = models.FloatField()
     quantity = models.FloatField()
-    description = models.TextField(max_length=1000)
     size = models.FloatField()
     color = models.CharField(max_length=100)
     in_stock = models.BooleanField(default=True)
@@ -69,18 +70,7 @@ class Product(models.Model):
         return self.name
 
 
-class Brand(models.Model):
-    name = models.CharField(max_length=225)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.name
-
-
 class CartItem(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-
-
-
