@@ -1,7 +1,6 @@
 from django.contrib import admin
-from .models import CustomUserManager, CustomUser, Category, Product, CartItem
+from .models import CustomUser, Category, Product, CartItem
 
-admin.site.register(CustomUserManager)
 admin.site.register(CustomUser)
 admin.site.register(Category)
 admin.site.register(Product)

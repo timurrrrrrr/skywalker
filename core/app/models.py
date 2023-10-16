@@ -18,7 +18,7 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(self, email, username, password):
         user = self.create_user(email, username, password)
         user.is_staff = True
-        user.is_superuser = True
+        user.is_admin = True
         user.save(using=self._db)
         return user
 
@@ -28,12 +28,29 @@ class CustomUser(AbstractBaseUser):
     username = models.CharField(max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
 
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
+
+    def has_perm(self, perm, obj=None):
+        """Does the user have a specific permission?"""
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        """Does the user have permissions to view the app `app_label`?"""
+        # Simplest possible answer: Yes, always
+        return True
+
+    @property
+    def is_staff(self):
+        """Is the user a member of staff?"""
+        # Simplest possible answer: All admins are staff
+        return self.is_admin
 
     def __str__(self):
         return self.email

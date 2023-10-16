@@ -31,6 +31,16 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+
     class Meta:
         model = CartItem
-        fields = ['product', 'quantity']
+        fields = ['user', 'product', 'quantity']
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+
+        if not user.is_staff:
+            return False
+        return attrs
+

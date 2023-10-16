@@ -1,5 +1,6 @@
+from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
-from rest_framework import status, generics
+from rest_framework import status, generics, permissions
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -46,10 +47,13 @@ class ProductDetailView(generics.RetrieveAPIView):
 
 class AddToCartView(generics.CreateAPIView):
     serializer_class = CartItemSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
+        if isinstance(self.request.user, AnonymousUser):
+            return JsonResponse({'message': 'Authentication required'}, status=401)
+
         product = get_object_or_404(Product, pk=serializer.validated_data['product'].pk)
-        serializer.save(user=self.request.user)
 
         existing_cart_item = CartItem.objects.filter(user=self.request.user, product=product).first()
 
@@ -57,13 +61,13 @@ class AddToCartView(generics.CreateAPIView):
             existing_cart_item.quantity += serializer.validated_data['quantity']
             existing_cart_item.save()
         else:
-            serializer.save()
+            serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        return JsonResponse({'message': 'Product added to cart successfully'})
+        return JsonResponse({'message': 'Product added to the cart successfully'})
 
 
 class ProductListView(generics.ListAPIView):
