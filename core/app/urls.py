@@ -7,7 +7,7 @@ from . import views
 
 schema_view = get_schema_view(
    Info(
-      title="Your API",
+      title="228",
       default_version='v1',
       description="Description of your API",
       terms_of_service="https://www.yourapp.com/terms/",
